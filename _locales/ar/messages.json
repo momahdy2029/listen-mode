@@ -169,5 +169,29 @@
   },
   "qualityAuto": {
     "message": "تلقائي"
+  },
+  "overlayStyle": {
+    "message": "الشكل"
+  },
+  "overlayStyleHint": {
+    "message": "ما يظهر مكان الفيديو أثناء الاستماع."
+  },
+  "styleBars": {
+    "message": "أعمدة"
+  },
+  "styleVinyl": {
+    "message": "أسطوانة"
+  },
+  "styleRings": {
+    "message": "حلقات"
+  },
+  "styleWave": {
+    "message": "موجة"
+  },
+  "styleThumb": {
+    "message": "صورة الفيديو"
+  },
+  "styleMinimal": {
+    "message": "بسيط"
   }
-}
+}\n

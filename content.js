@@ -63,6 +63,10 @@ if (!window.__youtubeAudioModeLoaded) {
     // Last quality reported by the page-context hook (inject.js)
     let lastReportedPageQuality = null;
 
+    // Overlay visual style: bars | vinyl | rings | wave | thumb | minimal
+    const OVERLAY_STYLES = ['bars', 'vinyl', 'rings', 'wave', 'thumb', 'minimal'];
+    let overlayStyle = 'bars';
+
     // Utility to lock manual detection during automated changes
     function setProgrammaticLock() {
         programmaticQualityLock = Date.now();
@@ -131,11 +135,14 @@ if (!window.__youtubeAudioModeLoaded) {
 
     if (chrome.runtime?.id) {
         try {
-            chrome.storage.sync.get(['audioMode', 'language', 'playbackSpeed', 'userSetSpeed', 'restoreQuality'], async function (result) {
+            chrome.storage.sync.get(['audioMode', 'language', 'playbackSpeed', 'userSetSpeed', 'restoreQuality', 'overlayStyle'], async function (result) {
                 if (chrome.runtime.lastError) return;
 
                 if (result.restoreQuality) {
                     restoreQualityLevel = result.restoreQuality;
+                }
+                if (OVERLAY_STYLES.includes(result.overlayStyle)) {
+                    overlayStyle = result.overlayStyle;
                 }
 
                 if (result.language) {
@@ -164,6 +171,9 @@ if (!window.__youtubeAudioModeLoaded) {
             chrome.storage.onChanged.addListener((changes, area) => {
                 if (area === 'sync' && changes.restoreQuality) {
                     restoreQualityLevel = changes.restoreQuality.newValue || QUALITY.RESTORE;
+                }
+                if (area === 'sync' && changes.overlayStyle) {
+                    setOverlayStyle(changes.overlayStyle.newValue);
                 }
             });
         } catch (e) { }
@@ -234,6 +244,9 @@ if (!window.__youtubeAudioModeLoaded) {
             sendResponse({ success: true });
         } else if (request.action === 'updateRestoreQuality') {
             restoreQualityLevel = request.quality || QUALITY.RESTORE;
+            sendResponse({ success: true });
+        } else if (request.action === 'updateOverlayStyle') {
+            setOverlayStyle(request.style);
             sendResponse({ success: true });
         } else if (request.action === 'getPlaybackState') {
             sendResponse(getPlaybackState());
@@ -751,23 +764,10 @@ if (!window.__youtubeAudioModeLoaded) {
         audioModeOverlay = document.createElement('div');
         audioModeOverlay.id = 'youtube-audio-mode-overlay';
 
-        audioModeOverlay.innerHTML = `
-    <div class="audio-mode-content">
-      <h2 id="am-overlay-title"></h2>
-      <p id="am-overlay-desc"></p>
-      
-      <div class="audio-visualizer">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </div>
-    </div>
-    `;
+        audioModeOverlay.innerHTML = buildOverlayMarkup(overlayStyle);
+        audioModeOverlay.classList.add('am-style-' + overlayStyle);
 
-        audioModeOverlay.querySelector('#am-overlay-title').textContent = t('activeTitle');
-        audioModeOverlay.querySelector('#am-overlay-desc').textContent = t('activeDesc');
+        fillOverlayText();
 
         videoContainer.style.position = 'relative';
         videoContainer.style.width = '100%';
@@ -785,20 +785,114 @@ if (!window.__youtubeAudioModeLoaded) {
         }
 
         const video = getVideoElement();
-        const visualizer = audioModeOverlay.querySelector('.audio-visualizer');
 
-        if (video && visualizer) {
-            if (video.paused) visualizer.classList.add('paused');
-
+        if (video) {
             const updatePlayState = () => {
-                video.paused ? visualizer.classList.add('paused') : visualizer.classList.remove('paused');
+                if (!audioModeOverlay) return;
+                audioModeOverlay.classList.toggle('am-paused', video.paused);
             };
+            updatePlayState();
 
             videoPlayHandler = updatePlayState;
             videoPauseHandler = updatePlayState;
             video.addEventListener('play', videoPlayHandler);
             video.addEventListener('pause', videoPauseHandler);
         }
+    }
+
+    function currentVideoId() {
+        try { return new URLSearchParams(window.location.search).get('v'); } catch (e) { return null; }
+    }
+
+    function currentVideoTitle() {
+        const el = document.querySelector('#title h1') ||
+            document.querySelector('.ytd-video-primary-info-renderer h1') ||
+            document.querySelector('h1.title');
+        if (el && el.textContent.trim()) return el.textContent.trim();
+        return (document.title || '').replace(/ - YouTube$/, '');
+    }
+
+    function thumbnailUrl() {
+        const id = currentVideoId();
+        return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : '';
+    }
+
+    // Markup for each overlay style. Text nodes are filled by fillOverlayText().
+    function buildOverlayMarkup(style) {
+        const text = `<h2 id="am-overlay-title"></h2><p id="am-overlay-desc"></p>`;
+        const thumb = thumbnailUrl();
+        switch (style) {
+            case 'vinyl':
+                return `<div class="audio-mode-content">
+      <div class="am-vinyl">
+        <div class="am-vinyl-disc">
+          <div class="am-vinyl-label"${thumb ? ` style="background-image:url('${thumb}')"` : ''}></div>
+        </div>
+        <div class="am-vinyl-arm"></div>
+      </div>
+      ${text}
+    </div>`;
+            case 'rings':
+                return `<div class="audio-mode-content">
+      <div class="am-rings">
+        <span class="am-ring"></span><span class="am-ring"></span><span class="am-ring"></span>
+        <svg class="am-rings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      </div>
+      ${text}
+    </div>`;
+            case 'wave':
+                return `<div class="audio-mode-content">
+      <div class="am-wave">
+        <svg viewBox="0 0 400 80" preserveAspectRatio="none">
+          <path class="am-wave-path am-wave-a" d="M0 40 C 25 10, 50 10, 75 40 S 125 70, 150 40 S 200 10, 225 40 S 275 70, 300 40 S 350 10, 375 40 S 425 70, 450 40 S 500 10, 525 40 S 575 70, 600 40 S 650 10, 675 40 S 725 70, 750 40 S 800 10, 825 40"/>
+          <path class="am-wave-path am-wave-b" d="M0 40 C 25 22, 50 22, 75 40 S 125 58, 150 40 S 200 22, 225 40 S 275 58, 300 40 S 350 22, 375 40 S 425 58, 450 40 S 500 22, 525 40 S 575 58, 600 40 S 650 22, 675 40 S 725 58, 750 40 S 800 22, 825 40"/>
+        </svg>
+      </div>
+      ${text}
+    </div>`;
+            case 'thumb':
+                return `<div class="am-thumb-bg"${thumb ? ` style="background-image:url('${thumb}')"` : ''}></div>
+    <div class="audio-mode-content">
+      <div class="am-thumb-card">
+        <img class="am-thumb-img" src="${thumb}" alt="">
+        <div class="am-thumb-text">
+          <div class="am-thumb-title" id="am-overlay-video-title"></div>
+          ${text}
+        </div>
+      </div>
+    </div>`;
+            case 'minimal':
+                return `<div class="audio-mode-content am-minimal">${text}</div>`;
+            case 'bars':
+            default:
+                return `<div class="audio-mode-content">
+      <div class="audio-visualizer">
+        ${'<span class="bar"></span>'.repeat(12)}
+      </div>
+      ${text}
+    </div>`;
+        }
+    }
+
+    function fillOverlayText() {
+        if (!audioModeOverlay) return;
+        const title = audioModeOverlay.querySelector('#am-overlay-title');
+        const desc = audioModeOverlay.querySelector('#am-overlay-desc');
+        const vt = audioModeOverlay.querySelector('#am-overlay-video-title');
+        if (title) title.textContent = t('activeTitle');
+        if (desc) desc.textContent = t('activeDesc');
+        if (vt) vt.textContent = currentVideoTitle();
+    }
+
+    // Swap the overlay's visual without recreating listeners or losing theme
+    function setOverlayStyle(style) {
+        if (!OVERLAY_STYLES.includes(style)) style = 'bars';
+        overlayStyle = style;
+        if (!audioModeOverlay) return;
+        OVERLAY_STYLES.forEach(s => audioModeOverlay.classList.remove('am-style-' + s));
+        audioModeOverlay.classList.add('am-style-' + style);
+        audioModeOverlay.innerHTML = buildOverlayMarkup(style);
+        fillOverlayText();
     }
 
     function formatVideoTime(seconds) {
@@ -831,14 +925,8 @@ if (!window.__youtubeAudioModeLoaded) {
 
     async function updateOverlayLanguage() {
         await loadMessages(currentLanguage);
-
         if (audioModeOverlay) {
-            const title = audioModeOverlay.querySelector('#am-overlay-title');
-            const desc = audioModeOverlay.querySelector('#am-overlay-desc');
-
-            if (title) title.textContent = t('activeTitle');
-            if (desc) desc.textContent = t('activeDesc');
-
+            fillOverlayText();
             if (currentLanguage === 'ar') audioModeOverlay.setAttribute('dir', 'rtl');
             else audioModeOverlay.removeAttribute('dir');
         }

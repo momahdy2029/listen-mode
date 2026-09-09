@@ -310,6 +310,37 @@ if (qualityChips.length) {
 }
 
 
+// Overlay style chips — what replaces the video while Listen Mode is on
+const styleChips = Array.from(document.querySelectorAll('#style-chips .chip'));
+
+function markStyleChip(style) {
+    styleChips.forEach(chip => chip.classList.toggle('active', chip.dataset.style === style));
+}
+
+if (styleChips.length) {
+    chrome.storage.sync.get(['overlayStyle'], (res) => {
+        markStyleChip(res.overlayStyle || 'bars');
+    });
+
+    styleChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const style = chip.dataset.style;
+            markStyleChip(style);
+            chip.classList.remove('applied');
+            void chip.offsetWidth;
+            chip.classList.add('applied');
+
+            chrome.storage.sync.set({ overlayStyle: style });
+
+            if (targetTabId) {
+                chrome.tabs.sendMessage(targetTabId, { action: 'updateOverlayStyle', style })
+                    .catch(() => { /* content script reads overlayStyle from storage on init */ });
+            }
+        });
+    });
+}
+
+
 // ===== MUSIC PLAYER LOGIC =====
 
 function requestPlaybackState() {
