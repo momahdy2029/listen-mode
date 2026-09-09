@@ -773,6 +773,7 @@ if (!window.__youtubeAudioModeLoaded) {
         videoContainer.style.width = '100%';
         videoContainer.style.height = '100%';
         videoContainer.appendChild(audioModeOverlay);
+        observeOverlaySize();
 
         if (currentLanguage === 'ar') audioModeOverlay.setAttribute('dir', 'rtl');
 
@@ -797,6 +798,26 @@ if (!window.__youtubeAudioModeLoaded) {
             videoPauseHandler = updatePlayState;
             video.addEventListener('play', videoPlayHandler);
             video.addEventListener('pause', videoPauseHandler);
+        }
+    }
+
+    // Expose the overlay's size as CSS variables so visuals scale with the
+    // player (container-query units are not reliable in Safari's content CSS)
+    let overlayResizeObserver = null;
+    function observeOverlaySize() {
+        if (overlayResizeObserver) overlayResizeObserver.disconnect();
+        const apply = () => {
+            if (!audioModeOverlay) return;
+            const r = audioModeOverlay.getBoundingClientRect();
+            if (r.width && r.height) {
+                audioModeOverlay.style.setProperty('--am-w', r.width + 'px');
+                audioModeOverlay.style.setProperty('--am-h', r.height + 'px');
+            }
+        };
+        apply();
+        if (typeof ResizeObserver !== 'undefined' && audioModeOverlay) {
+            overlayResizeObserver = new ResizeObserver(apply);
+            overlayResizeObserver.observe(audioModeOverlay);
         }
     }
 
