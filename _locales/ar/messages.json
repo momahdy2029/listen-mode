@@ -8,7 +8,7 @@
     "description": "Short tagline shown in popup header"
   },
   "extDescription": {
-    "message": "استمع إلى فيديوهات يوتيوب كصوت فقط. يُخفي الفيديو، ويخفض جودة البث إلى الأدنى، ويوفر باقة الإنترنت.",
+    "message": "استمع إلى يوتيوب كصوت فقط. يُخفي الفيديو ويخفض الجودة إلى الأدنى ويوفر باقة الإنترنت.",
     "description": "Extension description shown in Chrome Web Store"
   },
   "toggleCommand": {

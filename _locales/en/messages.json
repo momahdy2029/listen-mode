@@ -8,7 +8,7 @@
     "description": "Short tagline shown in popup header"
   },
   "extDescription": {
-    "message": "Listen to YouTube videos as audio only. Hides the video, drops the stream to the lowest quality, and saves your data.",
+    "message": "Listen to YouTube as audio only. Hides the video, drops to the lowest quality, and saves your data.",
     "description": "Extension description shown in Chrome Web Store"
   },
   "toggleCommand": {
