@@ -1,76 +1,57 @@
-<!-- ![YouTube Audio Mode](promo_images/marquee_promo.png) -->
+# Listen Mode
 
-# YouTube Audio Mode
+**Listen to YouTube without the video.**
 
-**Save bandwidth and enjoy distraction-free listening on YouTube.**
+Listen Mode is a browser extension for Chrome and Safari that turns any YouTube video into an audio-only stream. It hides the video, switches the stream to the lowest quality, and shows a calm audio visualizer instead. You keep the sound, skip the picture, and use a fraction of the data.
 
-YouTube Audio Mode is a lightweight Chrome extension that transforms your YouTube experience by playing videos in audio-only mode. It intelligently forces the video quality to 144p and hides the video player, replacing it with a beautiful audio visualizer. This drastically reduces internet data usage, making it perfect for music streaming, listening to podcasts, or saving bandwidth on metered connections.
+Ideal for music, podcasts, lectures, and long videos on mobile data or slow connections.
 
-## ✨ Key Features
+## Features
 
-- **🎧 One-Click Audio Mode:** Toggle audio-only playback instantly with a simple switch or keyboard shortcut (`Alt+Shift+A`) for Windows and `Option+Shift+A` for macOS.
-- **📉 Smart Data Saving:** Automatically sets video quality to **144p** to minimize bandwidth consumption while keeping audio clear.
-- **📊 Usage Statistics:** Track exactly how much data you've saved compared to 720p/1080p, along with your total listening time.
-- **🎵 Audio Visualizer:** A stunning, animated visualizer replaces the blank video screen.
-- **🎨 Custom Themes:** Choose from 6 beautiful gradient presets or customize the background with your own colors or images.
-- **🔒 Privacy Focused:** All data and preferences are stored locally on your device. No external tracking.
+- **One switch.** Turn Listen Mode on or off from the toolbar popup or with a keyboard shortcut (`Alt+Shift+A` on Windows/Linux, `Option+Shift+A` on macOS).
+- **No reloads.** Turning it on or off keeps your place in the video.
+- **Choose the quality to return to.** Pick Auto, 360p, 480p, 720p, 1080p, 1440p, or 4K. Applied instantly when you turn Listen Mode off.
+- **Now Playing controls.** Play, pause, skip 10 seconds, scrub, set speed and volume — all from the popup.
+- **Usage stats.** See how much data you used and saved, plus listening time, for this month or all time.
+- **Your look.** Six gradient presets, a custom color, or your own background image for the visualizer.
+- **Light and dark.** The popup follows your system appearance.
+- **Arabic and English.** Full right-to-left support.
+- **Private by design.** Nothing leaves your device. No accounts, no analytics, no ads.
 
-## 🚀 Installation
+## Install
 
-### Option 1: Chrome Web Store (Recommended)
+### Safari (macOS)
+Available on the Mac App Store. Search for **Listen Mode**, install, then enable it in Safari → Settings → Extensions.
 
-_Link coming soon once the review process is complete!_
+### Chrome
+1. Download or clone this repository.
+2. Open `chrome://extensions` and enable **Developer mode**.
+3. Click **Load unpacked** and select the project folder.
 
-### Option 2: Manual Installation (Developer Mode)
+## How it works
 
-1.  Clone or download this repository.
-2.  Open Chrome and go to `chrome://extensions/`.
-3.  Enable **Developer mode** in the top-right corner.
-4.  Click **Load unpacked**.
-5.  Select the folder where you downloaded this repository.
+Listen Mode asks the YouTube player for its lowest video quality (144p) and hides the video element. The audio track is unaffected. When you turn it off, the player is set back to the quality you chose. Data estimates use typical YouTube bitrates: about 0.75 MB/min at 144p versus 18.75 MB/min at 720p.
 
-## 📖 How to Use
+## Privacy
 
-1.  Open any YouTube video.
-2.  Click the **YouTube Audio Mode** icon in your browser toolbar.
-3.  Toggle the switch to **On**.
-4.  The video player will be hidden, and the visualizer will appear.
-5.  To customize the look, click the **Settings (Gear)** icon in the popup.
+Listen Mode does not collect, store, or send any personal data. Preferences and statistics are stored locally in your browser. See [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
 
-## ⌨️ Shortcuts
+## Development
 
-- **Toggle Audio Mode:** `Alt` + `Shift` + `A` for Windows and `Option` + `Shift` + `A` for macOS.
+- `manifest.json` — Manifest V3 configuration
+- `background.js` — service worker: shortcut, badge, script injection on navigation
+- `content.js` — player control, overlay, statistics
+- `inject.js` — page-context bridge to the YouTube player API
+- `popup.html` / `popup.js` / `popup.css` — toolbar popup
+- `overlay.css` — visualizer overlay
+- `icons/variants/` — icon sets (A–D); activate one with `scripts/set-icon.sh`
 
-## 📊 Statistics & Privacy
+The Safari app lives in a separate Xcode project (`YouTube Audio Mode.xcodeproj`) that wraps these same files.
 
-This extension calculates data savings based on average YouTube bitrate values:
+## Credits
 
-- **144p (Audio Mode):** ~0.75 MB/min
-- **720p (Standard):** ~18.75 MB/min
-- **1080p (HD):** ~33.75 MB/min
+Listen Mode began as a fork of [YouTube Audio Mode](https://github.com/devahmedadli/youtube-audio-mode) by Ahmed Adli (MIT). The popup, icons, quality restore flow, reload-free toggling, and Safari packaging were rebuilt by Mo Mahdy.
 
-**Privacy Policy:**
-We do not collect any personal data. All preferences and usage statistics are stored locally on your machine using the Chrome Storage API. For more details, see [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
+## License
 
-## 🛠️ Development
-
-### Project Structure
-
-- `manifest.json` - Extension configuration (Manifest V3)
-- `background.js` - Service worker for background tasks
-- `content.js` - Main logic for handling the video player and visualizer DOM
-- `popup.html/js/css` - The extension interface
-- `overlay.css` - Styles for the visualizer overlay
-
-### Tech Stack
-
-- HTML5, CSS3, JavaScript (ES6+)
-- Chrome Extension API (Manifest V3)
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
----
-
-_Developed with ❤️ by [Ahmed Adli](https://github.com/devahmedadli)_
+MIT

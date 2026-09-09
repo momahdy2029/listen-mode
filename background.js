@@ -1,4 +1,4 @@
-// Background script for YouTube Audio Mode
+// Background script for Listen Mode
 // Handles keyboard shortcuts and badge updates
 
 // Initialize state
@@ -64,18 +64,18 @@ chrome.commands.onCommand.addListener((command) => {
                     // Update storage if content script handles it
                     // (The content script updates storage, which triggers the onChanged listener above)
 
-                    // Fallback: inject content script if not ready
+                    // Fallback: inject content script if not ready (never reload the tab)
                     if (chrome.runtime.lastError) {
                         console.log('Content script not ready, injecting script...');
-                        chrome.scripting.executeScript({
-                            target: { tabId: currentTab.id },
-                            files: ['content.js']
-                        }, () => {
-                            // Toggle state after script is loaded
-                            chrome.storage.sync.get(['audioMode'], (result) => {
-                                const newState = !result.audioMode;
-                                chrome.storage.sync.set({ audioMode: newState });
-                            });
+                        chrome.storage.sync.get(['audioMode'], async (result) => {
+                            const newState = !result.audioMode;
+                            await chrome.storage.sync.set({ audioMode: newState });
+                            await injectContentScript(currentTab.id);
+                            setTimeout(() => {
+                                chrome.tabs.sendMessage(currentTab.id, { action: 'setAudioMode', enabled: newState }, () => {
+                                    void chrome.runtime.lastError;
+                                });
+                            }, 150);
                         });
                     }
                 });
@@ -84,26 +84,29 @@ chrome.commands.onCommand.addListener((command) => {
     }
 });
 
-// Handle YouTube navigation (new tabs and SPA navigation)
+// Inject content script + its CSS into a tab (idempotent: content.js guards itself)
+async function injectContentScript(tabId) {
+    try {
+        await chrome.scripting.insertCSS({ target: { tabId }, files: ['overlay.css'] });
+    } catch (e) { }
+    try {
+        await chrome.scripting.executeScript({ target: { tabId }, files: ['content.js'] });
+    } catch (err) {
+        console.log('[Audio Mode] Could not inject script:', err);
+    }
+}
+
+// Handle YouTube navigation (new tabs and SPA navigation).
+// Always make sure the content script is present on watch pages — regardless of
+// whether audio mode is currently on — so the popup toggle never has to reload the tab.
 function handleYouTubeNavigation(tabId, url) {
     // Only handle watch pages
     if (!url || !url.includes('youtube.com/watch')) return;
 
-    chrome.storage.sync.get(['audioMode'], (result) => {
-        if (result.audioMode) {
-            // Try to send message to existing content script
-            chrome.tabs.sendMessage(tabId, { action: 'getStatus' }, (response) => {
-                if (chrome.runtime.lastError) {
-                    // Content script not loaded, inject it
-                    console.log('[Audio Mode] Injecting content script for new navigation');
-                    chrome.scripting.executeScript({
-                        target: { tabId: tabId },
-                        files: ['content.js']
-                    }).catch(err => {
-                        console.log('[Audio Mode] Could not inject script:', err);
-                    });
-                }
-            });
+    chrome.tabs.sendMessage(tabId, { action: 'getStatus' }, (response) => {
+        if (chrome.runtime.lastError) {
+            console.log('[Audio Mode] Injecting content script for new navigation');
+            injectContentScript(tabId);
         }
     });
 }

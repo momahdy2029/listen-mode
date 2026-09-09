@@ -1,166 +1,173 @@
 {
-    "appName": {
-        "message": "وضع الصوت في يوتيوب",
-        "description": "Extension name"
-    },
-    "appDesc": {
-        "message": "وفر الانترنت، استمتع بالصوت",
-        "description": "Short tagline shown in popup header"
-    },
-    "extDescription": {
-        "message": "شغّل فيديوهات يوتيوب في وضع الصوت فقط لتوفير استهلاك الإنترنت",
-        "description": "Extension description shown in Chrome Web Store"
-    },
-    "toggleCommand": {
-        "message": "تبديل وضع الصوت",
-        "description": "Keyboard shortcut command description"
-    },
-    "appearance": {
-        "message": "المظهر",
-        "description": "Settings panel header"
-    },
-    "backgroundType": {
-        "message": "نوع الخلفية",
-        "description": "Setting label for background type selection"
-    },
-    "color": {
-        "message": "لون",
-        "description": "Background type option: color"
-    },
-    "image": {
-        "message": "صورة",
-        "description": "Background type option: image"
-    },
-    "presets": {
-        "message": "أنماط جاهزة",
-        "description": "Label for preset color themes"
-    },
-    "customColor": {
-        "message": "لون مخصص",
-        "description": "Label for custom color picker"
-    },
-    "imageUrl": {
-        "message": "رابط الصورة",
-        "description": "Label for image URL input"
-    },
-    "apply": {
-        "message": "تطبيق",
-        "description": "Button text to apply image URL"
-    },
-    "imageHint": {
-        "message": "ضع رابط مباشر للصورة",
-        "description": "Hint text for image URL input"
-    },
-    "audioOnly": {
-        "message": "وضع الصوت",
-        "description": "Main toggle section header"
-    },
-    "statusOff": {
-        "message": "اضغط للتفعيل",
-        "description": "Status text when audio mode is off"
-    },
-    "statusOn": {
-        "message": "وضع الصوت مفعل",
-        "description": "Status text when audio mode is on"
-    },
-    "shortcut": {
-        "message": "الاختصار (اضغط للتغيير):",
-        "description": "Label for keyboard shortcut display"
-    },
-    "thisMonth": {
-        "message": "هذا الشهر",
-        "description": "Stats filter: current month"
-    },
-    "allTime": {
-        "message": "كل الوقت",
-        "description": "Stats filter: all time"
-    },
-    "usedData": {
-        "message": "البيانات المستهلكة",
-        "description": "Label for used data statistic"
-    },
-    "savedData": {
-        "message": "توفير (مقارنة بـ 720p)",
-        "description": "Label for data saved statistic"
-    },
-    "listenedTime": {
-        "message": "وقت الاستماع",
-        "description": "Label for listened time statistic"
-    },
-    "activeTime": {
-        "message": "وقت النشاط",
-        "description": "Label for active time statistic"
-    },
-    "estDataUsage": {
-        "message": "استهلاك البيانات التقديري",
-        "description": "Table header for estimated data usage"
-    },
-    "quality": {
-        "message": "الجودة",
-        "description": "Table column header: quality"
-    },
-    "usage": {
-        "message": "الاستهلاك",
-        "description": "Table column header: usage"
-    },
-    "saved": {
-        "message": "توفير",
-        "description": "Table column header: saved"
-    },
-    "audioMode": {
-        "message": "وضع الصوت",
-        "description": "Quality row label for audio mode (144p)"
-    },
-    "developedBy": {
-        "message": "تطوير أحمد عدلي",
-        "description": "Footer developer credit"
-    },
-    "onlyYoutube": {
-        "message": "يعمل فقط على فيديوهات يوتيوب",
-        "description": "Message shown when not on YouTube"
-    },
-    "applied": {
-        "message": "تم التطبيق!",
-        "description": "Confirmation message after applying image"
-    },
-    "timeH": {
-        "message": "س",
-        "description": "Time unit: hours"
-    },
-    "timeM": {
-        "message": "د",
-        "description": "Time unit: minutes"
-    },
-    "timeS": {
-        "message": "ث",
-        "description": "Time unit: seconds"
-    },
-    "unitGB": {
-        "message": " جيجا",
-        "description": "Data unit: gigabytes"
-    },
-    "unitMB": {
-        "message": " ميجا",
-        "description": "Data unit: megabytes"
-    },
-    "activeTitle": {
-        "message": "وضع الصوت مفعل",
-        "description": "Overlay title when audio mode is active"
-    },
-    "activeDesc": {
-        "message": "نقوم بتوفير باقتك",
-        "description": "Overlay description when audio mode is active"
-    },
-    "playbackSpeed": {
-        "message": "سرعة التشغيل",
-        "description": "Label for playback speed control"
-    },
-    "speedNormal": {
-        "message": "عادي",
-        "description": "Label for normal speed (1x)"
-    },
-    "noVideo": {
-        "message": "لا يوجد فيديو يعمل حاليا",
-        "description": "Message shown when no video is currently active"
-    }
+  "appName": {
+    "message": "وضع الاستماع",
+    "description": "Extension name"
+  },
+  "appDesc": {
+    "message": "استمع ليوتيوب بدون فيديو",
+    "description": "Short tagline shown in popup header"
+  },
+  "extDescription": {
+    "message": "استمع إلى فيديوهات يوتيوب كصوت فقط. يُخفي الفيديو، ويخفض جودة البث إلى الأدنى، ويوفر باقة الإنترنت.",
+    "description": "Extension description shown in Chrome Web Store"
+  },
+  "toggleCommand": {
+    "message": "تشغيل/إيقاف وضع الاستماع",
+    "description": "Keyboard shortcut command description"
+  },
+  "appearance": {
+    "message": "المظهر",
+    "description": "Settings panel header"
+  },
+  "backgroundType": {
+    "message": "الخلفية",
+    "description": "Setting label for background type selection"
+  },
+  "color": {
+    "message": "لون",
+    "description": "Background type option: color"
+  },
+  "image": {
+    "message": "صورة",
+    "description": "Background type option: image"
+  },
+  "presets": {
+    "message": "ألوان جاهزة",
+    "description": "Label for preset color themes"
+  },
+  "customColor": {
+    "message": "لون مخصص",
+    "description": "Label for custom color picker"
+  },
+  "imageUrl": {
+    "message": "رابط الصورة",
+    "description": "Label for image URL input"
+  },
+  "apply": {
+    "message": "تطبيق",
+    "description": "Button text to apply image URL"
+  },
+  "imageHint": {
+    "message": "الصق رابطًا مباشرًا لصورة.",
+    "description": "Hint text for image URL input"
+  },
+  "audioOnly": {
+    "message": "صوت فقط",
+    "description": "Main toggle section header"
+  },
+  "statusOff": {
+    "message": "متوقف — اضغط للاستماع بدون فيديو"
+  },
+  "statusOn": {
+    "message": "يعمل — صوت فقط، الفيديو مخفي"
+  },
+  "shortcut": {
+    "message": "اختصار لوحة المفاتيح (اضغط للتغيير)"
+  },
+  "thisMonth": {
+    "message": "هذا الشهر",
+    "description": "Stats filter: current month"
+  },
+  "allTime": {
+    "message": "كل الوقت",
+    "description": "Stats filter: all time"
+  },
+  "usedData": {
+    "message": "البيانات المستخدمة",
+    "description": "Label for used data statistic"
+  },
+  "savedData": {
+    "message": "البيانات الموفَّرة مقارنةً بـ 720p",
+    "description": "Label for data saved statistic"
+  },
+  "listenedTime": {
+    "message": "مدة الاستماع",
+    "description": "Label for listened time statistic"
+  },
+  "activeTime": {
+    "message": "مدة التشغيل",
+    "description": "Label for active time statistic"
+  },
+  "estDataUsage": {
+    "message": "الاستهلاك التقديري للبيانات",
+    "description": "Table header for estimated data usage"
+  },
+  "quality": {
+    "message": "الجودة",
+    "description": "Table column header: quality"
+  },
+  "usage": {
+    "message": "الاستهلاك",
+    "description": "Table column header: usage"
+  },
+  "saved": {
+    "message": "الموفَّر",
+    "description": "Table column header: saved"
+  },
+  "audioMode": {
+    "message": "وضع الاستماع",
+    "description": "Quality row label for audio mode (144p)"
+  },
+  "developedBy": {
+    "message": "صنعه محمد مهدي",
+    "description": "Footer developer credit"
+  },
+  "onlyYoutube": {
+    "message": "افتح فيديو على يوتيوب للبدء",
+    "description": "Message shown when not on YouTube"
+  },
+  "applied": {
+    "message": "تم التطبيق",
+    "description": "Confirmation message after applying image"
+  },
+  "timeH": {
+    "message": "س",
+    "description": "Time unit: hours"
+  },
+  "timeM": {
+    "message": "د",
+    "description": "Time unit: minutes"
+  },
+  "timeS": {
+    "message": "ث",
+    "description": "Time unit: seconds"
+  },
+  "unitGB": {
+    "message": " جيجا",
+    "description": "Data unit: gigabytes"
+  },
+  "unitMB": {
+    "message": " ميجا",
+    "description": "Data unit: megabytes"
+  },
+  "activeTitle": {
+    "message": "وضع الاستماع يعمل",
+    "description": "Overlay title when audio mode is active"
+  },
+  "activeDesc": {
+    "message": "الفيديو مخفي — أنت توفر باقتك الآن",
+    "description": "Overlay description when audio mode is active"
+  },
+  "playbackSpeed": {
+    "message": "سرعة التشغيل",
+    "description": "Label for playback speed control"
+  },
+  "speedNormal": {
+    "message": "عادية",
+    "description": "Label for normal speed (1x)"
+  },
+  "noVideo": {
+    "message": "لا يوجد شيء قيد التشغيل",
+    "description": "Message shown when no video is currently active"
+  },
+  "restoreQuality": {
+    "message": "جودة الفيديو عند الإيقاف",
+    "description": "Setting label for the quality the video returns to when audio mode is off"
+  },
+  "restoreQualityHint": {
+    "message": "يعود الفيديو إلى هذه الجودة عند إيقاف وضع الاستماع. يُطبَّق فورًا."
+  },
+  "qualityAuto": {
+    "message": "تلقائي"
+  }
 }

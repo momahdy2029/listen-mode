@@ -1,8 +1,6 @@
-// Popup script for YouTube Audio Mode extension
+// Popup script for Listen Mode
 
 const audioToggle = document.getElementById('audioToggle');
-// const statusText = document.getElementById('status-text'); // Removed
-// const toggleSection = document.querySelector('.toggle-section'); // Removed 
 const supportBtn = document.getElementById('support-btn');
 const langBtn = document.getElementById('lang-btn');
 const speedSelect = document.getElementById('speed-select');
@@ -150,9 +148,10 @@ async function findTargetTab() {
 
     if (!tab) {
         // No YouTube tab found anywhere
-        // statusText.textContent = t('onlyYoutube'); // Removed
         audioToggle.disabled = true;
-        // toggleSection.style.opacity = '0.5'; // Removed
+        const st = document.getElementById('status-text');
+        if (st) { st.setAttribute('data-i18n', 'onlyYoutube'); st.textContent = t('onlyYoutube'); }
+        document.getElementById('hero')?.classList.add('disabled');
         return;
     }
 
@@ -185,27 +184,48 @@ function checkStorageState() {
     });
 }
 
+// Inject the content script (and its CSS) into a tab that doesn't have it yet.
+// Never reloads the page — a reload restarts the video from the beginning.
+async function ensureContentScript(tabId) {
+    await chrome.scripting.insertCSS({ target: { tabId }, files: ['overlay.css'] }).catch(() => { });
+    await chrome.scripting.executeScript({ target: { tabId }, files: ['content.js'] });
+}
+
 // Handle toggle change
-audioToggle.addEventListener('change', () => {
+audioToggle.addEventListener('change', async () => {
     const enabled = audioToggle.checked;
     if (!targetTabId) return;
 
-    // Send message to content script
-    chrome.tabs.sendMessage(targetTabId, { action: 'toggleAudioMode' })
-        .then((response) => {
-            if (response) {
-                updateUI(response.enabled);
-            }
-        })
-        .catch((error) => {
-            console.log('Could not send message to content script:', error.message);
-            // Update storage directly as fallback
-            chrome.storage.sync.set({ audioMode: enabled }, () => {
-                updateUI(enabled);
-                // Reload the tab to apply changes if possible
-                chrome.tabs.reload(targetTabId);
-            });
-        });
+    const sendToggle = () => chrome.tabs.sendMessage(targetTabId, { action: 'toggleAudioMode' });
+
+    try {
+        const response = await sendToggle();
+        if (response) updateUI(response.enabled);
+        return;
+    } catch (error) {
+        console.log('Content script not reachable, injecting:', error.message);
+    }
+
+    // Content script missing (SPA navigation / extension reloaded / page not idle yet).
+    // Inject it in place, then retry — no page reload.
+    try {
+        await chrome.storage.sync.set({ audioMode: enabled });
+        await ensureContentScript(targetTabId);
+        // Give the script a moment to register its message listener
+        await new Promise(r => setTimeout(r, 150));
+        // Explicit state (not toggle) — the injected script may already have
+        // applied the stored state during its own init.
+        const response = await chrome.tabs.sendMessage(targetTabId, { action: 'setAudioMode', enabled });
+        if (response) {
+            updateUI(response.enabled);
+            return;
+        }
+    } catch (error) {
+        console.log('Injection fallback failed:', error.message);
+    }
+
+    // Last resort: persist the desired state; content script picks it up on next load
+    chrome.storage.sync.set({ audioMode: enabled }, () => updateUI(enabled));
 });
 
 
@@ -252,6 +272,43 @@ if (volumeSelect) {
     });
 }
 
+// Restore Quality Logic (quality the video returns to when audio mode is off).
+// Chips on the main screen. Change is pushed to the tab instantly — content.js
+// applies it via the player API on the next disable, never via a page reload.
+const qualityChips = Array.from(document.querySelectorAll('#quality-chips .chip'));
+
+function markQualityChip(quality) {
+    qualityChips.forEach(chip => chip.classList.toggle('active', chip.dataset.quality === quality));
+}
+
+if (qualityChips.length) {
+    chrome.storage.sync.get(['restoreQuality'], (res) => {
+        markQualityChip(res.restoreQuality || 'hd720');
+    });
+
+    qualityChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const quality = chip.dataset.quality;
+            markQualityChip(quality);
+
+            chip.classList.remove('applied');
+            void chip.offsetWidth; // restart animation
+            chip.classList.add('applied');
+
+            chrome.storage.sync.set({ restoreQuality: quality });
+
+            if (targetTabId) {
+                chrome.tabs.sendMessage(targetTabId, {
+                    action: 'updateRestoreQuality',
+                    quality: quality
+                }).catch(() => {
+                    // Content script not ready — it reads restoreQuality from storage on init
+                });
+            }
+        });
+    });
+}
+
 
 // ===== MUSIC PLAYER LOGIC =====
 
@@ -292,6 +349,9 @@ function updateMusicPlayerUI(state) {
     // Metadata
     // Clean up title if needed (remove (1) etc)
     const displayTitle = state.title || t('noVideo');
+    // A real title must not be overwritten by the i18n pass in setLanguage()
+    if (state.title) amTitle.removeAttribute('data-i18n');
+    else amTitle.setAttribute('data-i18n', 'noVideo');
     if (amTitle.textContent !== displayTitle) {
         amTitle.textContent = displayTitle;
 
@@ -435,17 +495,17 @@ amProgressBar.addEventListener('input', (e) => {
 
 // ===== EXISTING LOGIC =====
 
+const heroEl = document.getElementById('hero');
+const statusTextEl = document.getElementById('status-text');
+const brandDotEl = document.getElementById('brand-dot');
+
 function updateUI(enabled) {
     audioToggle.checked = enabled;
-
-    if (enabled) {
-        // statusText.textContent = t('statusOn'); // Removed
-        // statusText.classList.add('active'); // Removed
-        // toggleSection.classList.add('active');
-    } else {
-        // statusText.textContent = t('statusOff'); // Removed
-        // statusText.classList.remove('active'); // Removed
-        // toggleSection.classList.remove('active');
+    if (heroEl) heroEl.classList.toggle('on', enabled);
+    if (brandDotEl) brandDotEl.classList.toggle('on', enabled);
+    if (statusTextEl) {
+        statusTextEl.setAttribute('data-i18n', enabled ? 'statusOn' : 'statusOff');
+        statusTextEl.textContent = t(enabled ? 'statusOn' : 'statusOff');
     }
 }
 
@@ -766,7 +826,7 @@ function saveAndApplyTheme(type, value) {
 // Support Button Logic
 if (supportBtn) {
     supportBtn.addEventListener('click', () => {
-        chrome.tabs.create({ url: 'https://www.paypal.com/paypalme/devahmedadli/5' });
+        chrome.tabs.create({ url: 'https://github.com/momahdy2029/listen-mode' });
     });
 }
 

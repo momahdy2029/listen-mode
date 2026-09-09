@@ -1,7 +1,5 @@
 # Contributing
 
-Thanks for your interest! ❤️  
-This repository is a personal showcase project and is maintained by a single author.
+Bug reports and feature requests are welcome at https://github.com/momahdy2029/listen-mode/issues.
 
-For this reason, external pull requests are not being accepted at the moment.
-Feedback and suggestions are always welcome — thank you for understanding!
+Pull requests are reviewed as time allows. Keep changes focused, and run the extension in both Chrome and Safari before submitting.

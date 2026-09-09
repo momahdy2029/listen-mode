@@ -1,166 +1,173 @@
 {
-    "appName": {
-        "message": "YouTube Audio Mode",
-        "description": "Extension name"
-    },
-    "appDesc": {
-        "message": "Save bandwidth, keep the audio",
-        "description": "Short tagline shown in popup header"
-    },
-    "extDescription": {
-        "message": "Play YouTube videos in audio-only mode to save bandwidth and reduce internet usage",
-        "description": "Extension description shown in Chrome Web Store"
-    },
-    "toggleCommand": {
-        "message": "Toggle Audio Mode",
-        "description": "Keyboard shortcut command description"
-    },
-    "appearance": {
-        "message": "Appearance",
-        "description": "Settings panel header"
-    },
-    "backgroundType": {
-        "message": "Background Type",
-        "description": "Setting label for background type selection"
-    },
-    "color": {
-        "message": "Color",
-        "description": "Background type option: color"
-    },
-    "image": {
-        "message": "Image",
-        "description": "Background type option: image"
-    },
-    "presets": {
-        "message": "Presets",
-        "description": "Label for preset color themes"
-    },
-    "customColor": {
-        "message": "Custom Color",
-        "description": "Label for custom color picker"
-    },
-    "imageUrl": {
-        "message": "Image URL",
-        "description": "Label for image URL input"
-    },
-    "apply": {
-        "message": "Apply",
-        "description": "Button text to apply image URL"
-    },
-    "imageHint": {
-        "message": "Paste a direct link to an image.",
-        "description": "Hint text for image URL input"
-    },
-    "audioOnly": {
-        "message": "Audio Only",
-        "description": "Main toggle section header"
-    },
-    "statusOff": {
-        "message": "Click to enable",
-        "description": "Status text when audio mode is off"
-    },
-    "statusOn": {
-        "message": "Audio mode is ON",
-        "description": "Status text when audio mode is on"
-    },
-    "shortcut": {
-        "message": "Shortcut(click to change):",
-        "description": "Label for keyboard shortcut display"
-    },
-    "thisMonth": {
-        "message": "This Month",
-        "description": "Stats filter: current month"
-    },
-    "allTime": {
-        "message": "All Time",
-        "description": "Stats filter: all time"
-    },
-    "usedData": {
-        "message": "Used Data",
-        "description": "Label for used data statistic"
-    },
-    "savedData": {
-        "message": "Saved vs 720p",
-        "description": "Label for data saved statistic"
-    },
-    "listenedTime": {
-        "message": "Listened",
-        "description": "Label for listened time statistic"
-    },
-    "activeTime": {
-        "message": "Active",
-        "description": "Label for active time statistic"
-    },
-    "estDataUsage": {
-        "message": "Est. Data Usage",
-        "description": "Table header for estimated data usage"
-    },
-    "quality": {
-        "message": "Quality",
-        "description": "Table column header: quality"
-    },
-    "usage": {
-        "message": "Usage",
-        "description": "Table column header: usage"
-    },
-    "saved": {
-        "message": "Saved",
-        "description": "Table column header: saved"
-    },
-    "audioMode": {
-        "message": "Audio Mode",
-        "description": "Quality row label for audio mode (144p)"
-    },
-    "developedBy": {
-        "message": "Developed by Ahmed Adli",
-        "description": "Footer developer credit"
-    },
-    "onlyYoutube": {
-        "message": "Only works on YouTube videos",
-        "description": "Message shown when not on YouTube"
-    },
-    "applied": {
-        "message": "Applied!",
-        "description": "Confirmation message after applying image"
-    },
-    "timeH": {
-        "message": "h",
-        "description": "Time unit: hours"
-    },
-    "timeM": {
-        "message": "m",
-        "description": "Time unit: minutes"
-    },
-    "timeS": {
-        "message": "s",
-        "description": "Time unit: seconds"
-    },
-    "unitGB": {
-        "message": " GB",
-        "description": "Data unit: gigabytes"
-    },
-    "unitMB": {
-        "message": " MB",
-        "description": "Data unit: megabytes"
-    },
-    "activeTitle": {
-        "message": "Audio Mode Active",
-        "description": "Overlay title when audio mode is active"
-    },
-    "activeDesc": {
-        "message": "Saving your bandwidth",
-        "description": "Overlay description when audio mode is active"
-    },
-    "playbackSpeed": {
-        "message": "Playback Speed",
-        "description": "Label for playback speed control"
-    },
-    "speedNormal": {
-        "message": "Normal",
-        "description": "Label for normal speed (1x)"
-    },
-    "noVideo": {
-        "message": "No Video Playing",
-        "description": "Message shown when no video is currently active"
-    }
+  "appName": {
+    "message": "Listen Mode",
+    "description": "Extension name"
+  },
+  "appDesc": {
+    "message": "Audio-only playback for YouTube",
+    "description": "Short tagline shown in popup header"
+  },
+  "extDescription": {
+    "message": "Listen to YouTube videos as audio only. Hides the video, drops the stream to the lowest quality, and saves your data.",
+    "description": "Extension description shown in Chrome Web Store"
+  },
+  "toggleCommand": {
+    "message": "Toggle Listen Mode",
+    "description": "Keyboard shortcut command description"
+  },
+  "appearance": {
+    "message": "Appearance",
+    "description": "Settings panel header"
+  },
+  "backgroundType": {
+    "message": "Background",
+    "description": "Setting label for background type selection"
+  },
+  "color": {
+    "message": "Color",
+    "description": "Background type option: color"
+  },
+  "image": {
+    "message": "Image",
+    "description": "Background type option: image"
+  },
+  "presets": {
+    "message": "Presets",
+    "description": "Label for preset color themes"
+  },
+  "customColor": {
+    "message": "Custom color",
+    "description": "Label for custom color picker"
+  },
+  "imageUrl": {
+    "message": "Image URL",
+    "description": "Label for image URL input"
+  },
+  "apply": {
+    "message": "Apply",
+    "description": "Button text to apply image URL"
+  },
+  "imageHint": {
+    "message": "Paste a direct link to an image.",
+    "description": "Hint text for image URL input"
+  },
+  "audioOnly": {
+    "message": "Audio only",
+    "description": "Main toggle section header"
+  },
+  "statusOff": {
+    "message": "Off — tap to listen without video"
+  },
+  "statusOn": {
+    "message": "On — audio only, video hidden"
+  },
+  "shortcut": {
+    "message": "Keyboard shortcut (tap to change)"
+  },
+  "thisMonth": {
+    "message": "This month",
+    "description": "Stats filter: current month"
+  },
+  "allTime": {
+    "message": "All time",
+    "description": "Stats filter: all time"
+  },
+  "usedData": {
+    "message": "Data used",
+    "description": "Label for used data statistic"
+  },
+  "savedData": {
+    "message": "Data saved vs 720p",
+    "description": "Label for data saved statistic"
+  },
+  "listenedTime": {
+    "message": "Listening time",
+    "description": "Label for listened time statistic"
+  },
+  "activeTime": {
+    "message": "Time active",
+    "description": "Label for active time statistic"
+  },
+  "estDataUsage": {
+    "message": "Estimated data usage",
+    "description": "Table header for estimated data usage"
+  },
+  "quality": {
+    "message": "Quality",
+    "description": "Table column header: quality"
+  },
+  "usage": {
+    "message": "Usage",
+    "description": "Table column header: usage"
+  },
+  "saved": {
+    "message": "Saved",
+    "description": "Table column header: saved"
+  },
+  "audioMode": {
+    "message": "Listen Mode",
+    "description": "Quality row label for audio mode (144p)"
+  },
+  "developedBy": {
+    "message": "Made by Mo Mahdy",
+    "description": "Footer developer credit"
+  },
+  "onlyYoutube": {
+    "message": "Open a YouTube video to get started",
+    "description": "Message shown when not on YouTube"
+  },
+  "applied": {
+    "message": "Applied",
+    "description": "Confirmation message after applying image"
+  },
+  "timeH": {
+    "message": "h",
+    "description": "Time unit: hours"
+  },
+  "timeM": {
+    "message": "m",
+    "description": "Time unit: minutes"
+  },
+  "timeS": {
+    "message": "s",
+    "description": "Time unit: seconds"
+  },
+  "unitGB": {
+    "message": " GB",
+    "description": "Data unit: gigabytes"
+  },
+  "unitMB": {
+    "message": " MB",
+    "description": "Data unit: megabytes"
+  },
+  "activeTitle": {
+    "message": "Listen Mode is on",
+    "description": "Overlay title when audio mode is active"
+  },
+  "activeDesc": {
+    "message": "Video hidden — you're saving data",
+    "description": "Overlay description when audio mode is active"
+  },
+  "playbackSpeed": {
+    "message": "Playback speed",
+    "description": "Label for playback speed control"
+  },
+  "speedNormal": {
+    "message": "Normal",
+    "description": "Label for normal speed (1x)"
+  },
+  "noVideo": {
+    "message": "Nothing playing",
+    "description": "Message shown when no video is currently active"
+  },
+  "restoreQuality": {
+    "message": "Video quality when off",
+    "description": "Setting label for the quality the video returns to when audio mode is off"
+  },
+  "restoreQualityHint": {
+    "message": "The video returns to this quality when you turn Listen Mode off. Applies instantly."
+  },
+  "qualityAuto": {
+    "message": "Auto"
+  }
 }

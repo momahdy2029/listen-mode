@@ -1,4 +1,4 @@
-// YouTube Audio Mode - Content Script
+// Listen Mode - Content Script
 // This script runs on YouTube pages and enables audio-only playback
 
 if (!window.__youtubeAudioModeLoaded) {
@@ -21,7 +21,20 @@ if (!window.__youtubeAudioModeLoaded) {
     const QUALITY = {
         TARGET: 'tiny',  // 144p
         FALLBACK: 'small',
-        RESTORE: 'hd720' // 720p
+        RESTORE: 'hd720' // 720p (default, overridden by user setting)
+    };
+
+    // YouTube API quality level -> player settings menu text
+    const QUALITY_UI_TEXT = {
+        'auto': 'Auto',
+        'tiny': '144p',
+        'small': '240p',
+        'medium': '360p',
+        'large': '480p',
+        'hd720': '720p',
+        'hd1080': '1080p',
+        'hd1440': '1440p',
+        'hd2160': '2160p'
     };
 
     const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -44,6 +57,12 @@ if (!window.__youtubeAudioModeLoaded) {
     let programmaticQualityLock = 0;
     let userManuallyChangedQuality = false;
 
+    // User-selected quality applied when audio mode is turned off
+    let restoreQualityLevel = QUALITY.RESTORE;
+
+    // Last quality reported by the page-context hook (inject.js)
+    let lastReportedPageQuality = null;
+
     // Utility to lock manual detection during automated changes
     function setProgrammaticLock() {
         programmaticQualityLock = Date.now();
@@ -51,6 +70,20 @@ if (!window.__youtubeAudioModeLoaded) {
 
     function isQualityLocked() {
         return (Date.now() - programmaticQualityLock) < TIMING.LOCK_DURATION;
+    }
+
+    // Route player API calls through the page-context hook — the content
+    // script's isolated world may not see movie_player's API methods in Safari
+    function setPageQuality(quality) {
+        try {
+            window.postMessage({ type: 'AM_SET_QUALITY_REQUEST', quality: quality }, '*');
+        } catch (e) { }
+    }
+
+    function requestPageQuality() {
+        try {
+            window.postMessage({ type: 'AM_GET_QUALITY_REQUEST' }, '*');
+        } catch (e) { }
     }
 
     let loadedMessages = {};
@@ -91,13 +124,19 @@ if (!window.__youtubeAudioModeLoaded) {
             if (isQualityLocked()) return;
             console.log('[Audio Mode] User manually changed quality to', event.data.quality);
             userManuallyChangedQuality = true;
+        } else if (event.data.type === 'AM_QUALITY_STATUS' && event.data.quality) {
+            lastReportedPageQuality = event.data.quality;
         }
     });
 
     if (chrome.runtime?.id) {
         try {
-            chrome.storage.sync.get(['audioMode', 'language', 'playbackSpeed', 'userSetSpeed'], async function (result) {
+            chrome.storage.sync.get(['audioMode', 'language', 'playbackSpeed', 'userSetSpeed', 'restoreQuality'], async function (result) {
                 if (chrome.runtime.lastError) return;
+
+                if (result.restoreQuality) {
+                    restoreQualityLevel = result.restoreQuality;
+                }
 
                 if (result.language) {
                     await loadMessages(result.language);
@@ -106,7 +145,7 @@ if (!window.__youtubeAudioModeLoaded) {
                     await loadMessages(detectedLang);
                 }
 
-                if (result.audioMode) enableAudioMode();
+                if (result.audioMode && !audioModeEnabled) enableAudioMode();
 
                 if (result.userSetSpeed !== undefined && result.playbackSpeed) {
                     userSetSpeed = result.userSetSpeed;
@@ -117,6 +156,17 @@ if (!window.__youtubeAudioModeLoaded) {
         } catch (error) {
             console.log('[Audio Mode] Error during initialization:', error);
         }
+    }
+
+    // Keep restore quality in sync even if the popup's direct message didn't reach us
+    if (chrome.runtime?.id && chrome.storage?.onChanged) {
+        try {
+            chrome.storage.onChanged.addListener((changes, area) => {
+                if (area === 'sync' && changes.restoreQuality) {
+                    restoreQualityLevel = changes.restoreQuality.newValue || QUALITY.RESTORE;
+                }
+            });
+        } catch (e) { }
     }
 
     function getVideoElement() {
@@ -161,6 +211,12 @@ if (!window.__youtubeAudioModeLoaded) {
             if (audioModeEnabled) disableAudioMode();
             else enableAudioMode();
             sendResponse({ enabled: audioModeEnabled });
+        } else if (request.action === 'setAudioMode') {
+            // Idempotent explicit state — safe to call right after injection
+            const wanted = !!request.enabled;
+            if (wanted && !audioModeEnabled) enableAudioMode();
+            else if (!wanted && audioModeEnabled) disableAudioMode();
+            sendResponse({ enabled: audioModeEnabled });
         } else if (request.action === 'getStatus') {
             sendResponse({ enabled: audioModeEnabled });
         } else if (request.action === 'updateTheme') {
@@ -175,6 +231,9 @@ if (!window.__youtubeAudioModeLoaded) {
             userSetSpeed = true;
             currentPlaybackSpeed = request.speed;
             applyPlaybackSpeed();
+            sendResponse({ success: true });
+        } else if (request.action === 'updateRestoreQuality') {
+            restoreQualityLevel = request.quality || QUALITY.RESTORE;
             sendResponse({ success: true });
         } else if (request.action === 'getPlaybackState') {
             sendResponse(getPlaybackState());
@@ -323,6 +382,19 @@ if (!window.__youtubeAudioModeLoaded) {
                 popup.style.pointerEvents = originalPopupStyles.pointerEvents || '';
             }
             setTimeout(() => { programmaticQualityLock = Date.now(); }, 500);
+
+            // Second pass: clear any leftover hiding styles and make sure the
+            // menu isn't stuck open (which makes the gear button feel dead)
+            setTimeout(() => {
+                document.querySelectorAll('.ytp-settings-menu, .ytp-popup').forEach(el => {
+                    if (el.style.visibility === 'hidden') el.style.removeProperty('visibility');
+                    if (el.style.opacity === '0') el.style.removeProperty('opacity');
+                    if (el.style.pointerEvents === 'none') el.style.removeProperty('pointer-events');
+                });
+                document.dispatchEvent(new KeyboardEvent('keydown', {
+                    key: 'Escape', code: 'Escape', keyCode: 27, which: 27, bubbles: true, cancelable: true
+                }));
+            }, 400);
         };
 
         try {
@@ -381,7 +453,8 @@ if (!window.__youtubeAudioModeLoaded) {
                         } else {
                             menuItems[menuItems.length - 1].click();
                         }
-                    } else if (targetText === '720p') {
+                    } else if (targetText !== '144p') {
+                        // Restore quality unavailable in the menu — fall back to Auto
                         const autoOption = menuItems.find(item => item.textContent.includes('Auto') || item.textContent.includes('تلقائية'));
                         if (autoOption) {
                             setProgrammaticLock();
@@ -398,7 +471,9 @@ if (!window.__youtubeAudioModeLoaded) {
                 document.dispatchEvent(escapeEvent);
             }
 
-            if (wasPlaying && video.paused) {
+            // Never seek back to a bogus position — the video element can
+            // momentarily report 0 while YouTube swaps the quality stream
+            if (wasPlaying && video.paused && isFinite(currentTime) && currentTime > 1) {
                 video.currentTime = currentTime;
                 video.play().catch(err => console.log('[Audio Mode] Could not resume:', err));
             }
@@ -420,14 +495,35 @@ if (!window.__youtubeAudioModeLoaded) {
                 if (typeof player.setInternalQuality === 'function') player.setInternalQuality('tiny');
                 if (player.playerInfo && player.playerInfo.setPlaybackQuality) player.playerInfo.setPlaybackQuality('tiny');
             } catch (e) { }
+            // Page-context bridge — works even when the isolated world can't see the API
+            setPageQuality('tiny');
         }
 
         try {
             setProgrammaticLock();
             const wasPlaying = !video.paused;
+            // The quality switch can restart the stream from 0 — remember where we were
+            const safePosition = (isFinite(video.currentTime) && video.currentTime > 1) ? video.currentTime : null;
 
             // Apply immediately
             applyAPI();
+
+            // Repair the position if the stream switch restarted playback
+            if (safePosition !== null) {
+                let repairs = 0;
+                const repairPosition = () => {
+                    if (!audioModeEnabled || !player.isConnected || repairs >= 8) return;
+                    repairs++;
+                    const now = video.currentTime;
+                    if (isFinite(now) && now < safePosition - 5 && !video.seeking) {
+                        console.log('[Audio Mode] Position lost (' + now.toFixed(1) + 's) — restoring to ' + safePosition.toFixed(1) + 's');
+                        video.currentTime = safePosition;
+                        if (wasPlaying && video.paused) video.play().catch(() => { });
+                    }
+                    setTimeout(repairPosition, 700);
+                };
+                setTimeout(repairPosition, 700);
+            }
 
             // Aggressively re-apply for 2 seconds to defeat YouTube's startup adaptive engine
             let attempts = 0;
@@ -488,20 +584,63 @@ if (!window.__youtubeAudioModeLoaded) {
         setProgrammaticLock();
         userManuallyChangedQuality = false;
 
+        // Quality switches can momentarily reset the media element to 0 —
+        // never let that become the "restored" position
+        const safePosition = (isFinite(video.currentTime) && video.currentTime > 1) ? video.currentTime : null;
+        const wasPlaying = !video.paused;
+
         try {
             const availableLevels = player.getAvailableQualityLevels ? player.getAvailableQualityLevels() : [];
-            let target = QUALITY.RESTORE;
-            let uiTargetText = '720p';
+            let target = restoreQualityLevel;
+            let uiTargetText = QUALITY_UI_TEXT[restoreQualityLevel] || '720p';
 
-            if (availableLevels.length > 0 && !availableLevels.includes(QUALITY.RESTORE)) {
+            // Fall back to Auto if the chosen quality isn't offered for this video
+            if (target !== 'auto' && availableLevels.length > 0 && !availableLevels.includes(target)) {
+                console.log('[Audio Mode] Restore quality', target, 'unavailable, using Auto. Available:', availableLevels.join(','));
                 target = 'auto';
                 uiTargetText = 'Auto';
             }
 
-            if (player.setPlaybackQualityRange) player.setPlaybackQualityRange('auto', 'auto');
-            if (player.setPlaybackQuality) player.setPlaybackQuality(target);
+            console.log('[Audio Mode] Restoring quality to:', target);
 
-            clickQualitySetting(video, uiTargetText);
+            // Phase 1: page-context API attempts (invisible — never touches the player UI)
+            const applyAPI = () => {
+                try {
+                    if (player.setPlaybackQualityRange) player.setPlaybackQualityRange(target, target);
+                    if (player.setPlaybackQuality) player.setPlaybackQuality(target);
+                } catch (e) { }
+                setPageQuality(target);
+            };
+            applyAPI();
+            setTimeout(applyAPI, 500);
+            setTimeout(applyAPI, 1200);
+
+            // Phase 2: single UI fallback only if the API alone didn't achieve it
+            setTimeout(() => {
+                if (audioModeEnabled || !player.isConnected) return;
+                requestPageQuality();
+                const current = lastReportedPageQuality ||
+                    (player.getPlaybackQuality ? player.getPlaybackQuality() : 'unknown');
+                console.log('[Audio Mode] Restore status: current=' + current + ', wanted=' + target);
+                if (current !== target) clickQualitySetting(video, uiTargetText);
+            }, 2000);
+
+            // Phase 3: repair the position if the stream switch restarted playback
+            if (safePosition !== null) {
+                let repairs = 0;
+                const repairPosition = () => {
+                    if (audioModeEnabled || !player.isConnected || repairs >= 8) return;
+                    repairs++;
+                    const now = video.currentTime;
+                    if (isFinite(now) && now < safePosition - 5 && !video.seeking) {
+                        console.log('[Audio Mode] Position lost (' + now.toFixed(1) + 's) — restoring to ' + safePosition.toFixed(1) + 's');
+                        video.currentTime = safePosition;
+                        if (wasPlaying && video.paused) video.play().catch(() => { });
+                    }
+                    setTimeout(repairPosition, 700);
+                };
+                setTimeout(repairPosition, 700);
+            }
         } catch (e) {
             console.error('[Audio Mode] Error restoring quality:', e);
         }
@@ -603,6 +742,8 @@ if (!window.__youtubeAudioModeLoaded) {
         await loadMessages(currentLanguage);
 
         if (audioModeOverlay) audioModeOverlay.remove();
+        // Also clear any overlay left behind by an orphaned script (extension reloaded)
+        document.querySelectorAll('#youtube-audio-mode-overlay').forEach(el => el.remove());
 
         const videoContainer = document.querySelector('.html5-video-container') || document.querySelector('#player-container');
         if (!videoContainer) return;

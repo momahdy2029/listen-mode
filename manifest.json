@@ -1,10 +1,10 @@
 {
     "manifest_version": 3,
     "name": "__MSG_appName__",
-    "version": "2.1.0",
+    "version": "2.4.0",
     "description": "__MSG_extDescription__",
     "default_locale": "en",
-    "homepage_url": "https://github.com/Ahmed/youtube-audio-mode",
+    "homepage_url": "https://github.com/momahdy2029/listen-mode",
     "permissions": [
         "storage",
         "activeTab",
@@ -12,15 +12,14 @@
         "webNavigation"
     ],
     "host_permissions": [
-        "https://www.youtube.com/watch*"
+        "https://www.youtube.com/*"
     ],
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
-            "16": "icons/icon16.png",
-            "32": "icons/icon32.png",
-            "48": "icons/icon48.png",
-            "128": "icons/icon128.png"
+            "16": "icons/toolbar16.png",
+            "32": "icons/toolbar32.png",
+            "48": "icons/toolbar48.png"
         }
     },
     "background": {
@@ -40,7 +39,7 @@
     "content_scripts": [
         {
             "matches": [
-                "https://www.youtube.com/watch*"
+                "https://www.youtube.com/*"
             ],
             "js": [
                 "content.js"

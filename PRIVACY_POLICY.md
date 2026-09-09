@@ -1,81 +1,52 @@
-# Privacy Policy - YouTube Audio Mode
+# Privacy Policy — Listen Mode
 
-**Last Updated: December 16, 2024**
+**Last updated: September 9, 2026**
 
-## Overview
+Listen Mode is a browser extension by Mo Mahdy that plays YouTube videos as audio only. This policy explains what the extension does with your data. The short version: it collects nothing and sends nothing.
 
-YouTube Audio Mode is committed to protecting your privacy. This extension does NOT collect, store, or transmit any personal information.
+## What we collect
 
-## Data Collection
+Nothing. Listen Mode has no servers, no accounts, no analytics, and no advertising. No personal information, browsing history, or usage data is transmitted anywhere.
 
-**We do NOT collect any personal data.**
+## What is stored on your device
 
-All extension data is stored locally on your device using Chrome's storage API. Nothing is sent to external servers.
+To work, the extension keeps a small amount of data in your browser's extension storage. It never leaves your device:
 
-## Information Stored Locally
+- Whether Listen Mode is on or off
+- The video quality to return to when Listen Mode is turned off
+- Playback speed and volume preferences
+- Appearance settings for the visualizer (colors or an image link you provide)
+- Language preference
+- Daily listening-time counters used to show your usage statistics (kept for 90 days)
 
-The extension stores the following data **on your device only**:
+If you use browser sync, your browser may sync these preferences to your other devices under your own account. Listen Mode has no access to that sync.
 
-- Audio mode ON/OFF preference
-- Theme and appearance settings (background type, colors, custom images)
-- Usage statistics (data saved, listening time, active time)
-- Daily usage logs for statistical purposes
+## Permissions and why they are needed
 
-This data never leaves your computer.
+| Permission | Purpose |
+| --- | --- |
+| `storage` | Save your preferences and statistics locally |
+| `activeTab`, `scripting` | Run the extension on the YouTube tab you are using |
+| `webNavigation` | Detect when YouTube navigates to a new video so the extension stays active |
+| Access to `youtube.com` | Control the YouTube player and hide the video. The extension does not run on any other site |
 
-## Permissions Explained
+## Third parties
 
-### storage
+Listen Mode does not share data with anyone. It loads no third-party scripts or services. If you set a custom background image, your browser fetches that image from the URL you entered.
 
-To save your preferences and statistics locally on your device.
+## Your control
 
-### activeTab
+- Turn Listen Mode off at any time from the toolbar popup or Safari's Extensions settings.
+- Remove the extension to delete all stored data.
 
-To detect when you're on a YouTube video page and allow the extension to work.
+## Children
 
-### scripting
+Listen Mode is not directed at children and collects no data from anyone.
 
-To inject content scripts that control video quality and create the audio visualizer overlay.
+## Changes
 
-### host_permissions (youtube.com)
-
-To access and modify YouTube video pages only. The extension does not work on any other websites.
-
-## Third-Party Services
-
-This extension does **NOT**:
-
-- Send data to external servers
-- Use analytics or tracking services
-- Share information with third parties
-- Display advertisements
-- Collect personally identifiable information
-- Track your browsing history
-- Access your Google account
-
-## Data Security
-
-All data is stored locally using Chrome's encrypted storage API. Your statistics and preferences remain private and secure on your device.
-
-## Changes to Privacy Policy
-
-We may update this privacy policy from time to time. Any updates will be posted on the Chrome Web Store listing and in the extension's GitHub repository.
+If this policy changes, the updated version will be published at the address below with a new date.
 
 ## Contact
 
-For privacy concerns or questions:
-
-- **Email:** devahmedadli@gmail.com
-- **GitHub:** https://github.com/devahmedadli
-
-## Your Rights
-
-You can:
-
-- Clear all stored data by removing the extension
-- Reset statistics at any time through Chrome's extension settings
-- View all stored data using Chrome's Developer Tools (Storage tab)
-
----
-
-_This extension respects your privacy and aims to provide a transparent, secure experience._
+Mo Mahdy — https://github.com/momahdy2029/listen-mode/issues
