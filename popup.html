@@ -15,7 +15,7 @@
         <!-- Top bar -->
         <header class="topbar">
             <div class="brand">
-                <span class="brand-dot" id="brand-dot"></span>
+                <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 13v-2a7 7 0 0 1 14 0v2M5 12H4v7h4v-7H5Zm14 0h1v7h-4v-7h3Z"/></svg><span class="brand-dot" id="brand-dot"></span></span>
                 <span class="brand-name" data-i18n="appName">Listen Mode</span>
             </div>
             <div class="topbar-actions">
@@ -40,47 +40,14 @@
         <section class="hero" id="hero">
             <label class="hero-toggle" for="audioToggle">
                 <div class="hero-text">
-                    <span class="hero-title" data-i18n="audioMode">Audio Mode</span>
-                    <span class="hero-status" id="status-text" data-i18n="statusOff">Click to enable</span>
+                    <span class="hero-title" id="audio-label" data-i18n="audioOnly">Audio only</span>
+                    <span class="hero-status" id="status-text" aria-live="polite" data-i18n="statusOff">Off · Turn on to hide the video</span>
                 </div>
                 <span class="toggle-switch">
-                    <input type="checkbox" id="audioToggle">
+                    <input type="checkbox" id="audioToggle" role="switch" aria-labelledby="audio-label" aria-describedby="status-text">
                     <span class="slider"></span>
                 </span>
             </label>
-
-            <!-- Restore quality: applied instantly, no reload -->
-            <div class="quality-row">
-                <div class="quality-head">
-                    <span class="quality-label" data-i18n="restoreQuality">Video Restore Quality</span>
-                    <span class="quality-hint" data-i18n="restoreQualityHint">Quality the video returns to when audio mode is turned off.</span>
-                </div>
-                <div class="chips" id="quality-chips" role="radiogroup" dir="ltr">
-                    <button class="chip" data-quality="auto" data-i18n="qualityAuto">Auto</button>
-                    <button class="chip" data-quality="medium">360p</button>
-                    <button class="chip" data-quality="large">480p</button>
-                    <button class="chip" data-quality="hd720">720p</button>
-                    <button class="chip" data-quality="hd1080">1080p</button>
-                    <button class="chip" data-quality="hd1440">1440p</button>
-                    <button class="chip" data-quality="hd2160">4K</button>
-                </div>
-            </div>
-
-            <!-- Overlay visual style: what replaces the video while listening -->
-            <div class="quality-row style-row">
-                <div class="quality-head">
-                    <span class="quality-label" data-i18n="overlayStyle">Visual</span>
-                    <span class="quality-hint" data-i18n="overlayStyleHint">What you see in place of the video.</span>
-                </div>
-                <div class="chips" id="style-chips" role="radiogroup">
-                    <button class="chip" data-style="bars" data-i18n="styleBars">Bars</button>
-                    <button class="chip" data-style="vinyl" data-i18n="styleVinyl">Vinyl</button>
-                    <button class="chip" data-style="rings" data-i18n="styleRings">Rings</button>
-                    <button class="chip" data-style="wave" data-i18n="styleWave">Wave</button>
-                    <button class="chip" data-style="thumb" data-i18n="styleThumb">Thumbnail</button>
-                    <button class="chip" data-style="minimal" data-i18n="styleMinimal">Minimal</button>
-                </div>
-            </div>
         </section>
 
         <!-- Now playing -->
@@ -96,10 +63,10 @@
                     </div>
                 </div>
                 <div class="track-info">
-                    <div class="title-scroll-wrapper">
+                    <div class="title-scroll-wrapper" dir="auto">
                         <h2 id="am-video-title" data-i18n="noVideo">No Video Playing</h2>
                     </div>
-                    <p id="am-channel-name">YouTube</p>
+                    <p id="am-channel-name" dir="auto">YouTube</p>
                 </div>
             </div>
 
@@ -107,7 +74,7 @@
                 <span id="am-current-time">0:00</span>
                 <div class="progress-bar-wrapper">
                     <div class="progress-fill" id="am-progress-fill" style="width: 0%"></div>
-                    <input type="range" class="am-progress-bar" id="am-progress-bar" min="0" max="100" value="0"
+                    <input type="range" aria-label="Playback position" class="am-progress-bar" id="am-progress-bar" min="0" max="100" value="0"
                         step="0.1" disabled>
                 </div>
                 <span id="am-total-time">0:00</span>
@@ -151,6 +118,41 @@
             </div>
         </section>
 
+        <section class="preferences">
+            <!-- Overlay visual style: what replaces the video while listening -->
+            <div class="quality-row style-row">
+                <div class="quality-head">
+                    <span class="quality-label" id="style-label" data-i18n="overlayStyle">Listening visual</span>
+                    <span class="quality-hint" data-i18n="overlayStyleHint">What you see in place of the video.</span>
+                </div>
+                <div class="chips" id="style-chips" role="group" aria-labelledby="style-label">
+                    <button class="chip style-tile" data-style="bars"><svg class="style-preview" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12v8M10 7v18M16 3v26M22 9v14M27 12v8"/></svg><span data-i18n="styleBars">Bars</span></button>
+                    <button class="chip style-tile" data-style="vinyl"><svg class="style-preview" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="16" r="12"/><circle cx="16" cy="16" r="8" opacity=".4"/><circle cx="16" cy="16" r="3"/><path d="m22 3 7 2-2 14"/></svg><span data-i18n="styleVinyl">Vinyl</span></button>
+                    <button class="chip style-tile" data-style="rings"><svg class="style-preview" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="16" r="12" opacity=".35"/><circle cx="16" cy="16" r="8" opacity=".65"/><circle cx="16" cy="16" r="3"/></svg><span data-i18n="styleRings">Rings</span></button>
+                    <button class="chip style-tile" data-style="wave"><svg class="style-preview" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 16c3 0 3-10 6-10s3 20 6 20 3-20 6-20 3 10 6 10h4"/></svg><span data-i18n="styleWave">Wave</span></button>
+                    <button class="chip style-tile" data-style="thumb"><svg class="style-preview" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="26" height="20" rx="3"/><circle cx="11" cy="12" r="2"/><path d="m4 23 8-6 5 4 5-7 7 9"/></svg><span data-i18n="styleThumb">Thumbnail</span></button>
+                    <button class="chip style-tile" data-style="minimal"><svg class="style-preview" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 16h14"/><circle cx="16" cy="16" r="10" opacity=".25"/></svg><span data-i18n="styleMinimal">Minimal</span></button>
+                </div>
+            </div>
+            <!-- Restore quality: applied instantly, no reload -->
+            <div class="quality-row">
+                <div class="quality-head">
+                    <span class="quality-label" id="quality-label" data-i18n="restoreQuality">Return to video at</span>
+                    <span class="quality-hint" data-i18n="restoreQualityHint">Video quality after you turn audio only off.</span>
+                </div>
+                <div class="chips" id="quality-chips" role="group" aria-labelledby="quality-label" dir="ltr">
+                    <button class="chip" data-quality="auto" data-i18n="qualityAuto">Auto</button>
+                    <button class="chip" data-quality="medium">360p</button>
+                    <button class="chip" data-quality="large">480p</button>
+                    <button class="chip" data-quality="hd720">720p</button>
+                    <button class="chip" data-quality="hd1080">1080p</button>
+                    <button class="chip" data-quality="hd1440">1440p</button>
+                    <button class="chip" data-quality="hd2160">4K</button>
+                </div>
+            </div>
+
+        </section>
+
         <!-- Stats -->
         <section class="stats">
             <div class="stats-head">
@@ -178,13 +180,14 @@
                     <span class="stat-label" data-i18n="activeTime">Active</span>
                 </div>
             </div>
+            <p class="stats-note" data-i18n="statsEstimate">Data figures are estimates.</p>
         </section>
 
         <!-- Shortcut + footer -->
         <footer class="footer">
             <div class="shortcuts-hint">
-                <span data-i18n="shortcut">Shortcut (click to change):</span>
-                <div class="keys" id="shortcut-display"><span class="loading">…</span></div>
+                <span data-i18n="shortcut">Keyboard shortcut</span>
+                <button class="keys" id="shortcut-display" dir="ltr" title="Configure keyboard shortcut"><span class="loading">…</span></button>
             </div>
             <a class="credit" href="https://github.com/momahdy2029/listen-mode" target="_blank" rel="noopener noreferrer">
                 <svg height="13" width="13" viewBox="0 0 16 16" fill="currentColor">
@@ -195,9 +198,9 @@
         </footer>
 
         <!-- Settings sheet (appearance of the on-page overlay) -->
-        <div id="settings-panel" class="settings-panel">
+        <div id="settings-panel" class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title" inert>
             <div class="settings-header">
-                <h2 data-i18n="appearance">Appearance</h2>
+                <h2 id="settings-title" data-i18n="appearance">Appearance</h2>
                 <button id="close-settings" class="icon-btn" title="Close">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
@@ -229,7 +232,7 @@
                         <button class="theme-btn" data-theme="minimal" style="background: #222;" title="Minimal Dark"></button>
                     </div>
 
-                    <label class="mt" data-i18n="customColor">Custom Color</label>
+                    <label class="mt" for="custom-color-picker" data-i18n="customColor">Custom Color</label>
                     <div class="color-picker-wrapper">
                         <input type="color" id="custom-color-picker" value="#667eea">
                         <span id="color-value-text">#667eea</span>
@@ -237,7 +240,7 @@
                 </div>
 
                 <div id="image-options" class="setting-group hidden">
-                    <label data-i18n="imageUrl">Image URL</label>
+                    <label for="custom-image-url" data-i18n="imageUrl">Image URL</label>
                     <div class="input-group">
                         <input type="text" id="custom-image-url" placeholder="https://example.com/image.jpg">
                         <button id="apply-image-btn" data-i18n="apply">Apply</button>

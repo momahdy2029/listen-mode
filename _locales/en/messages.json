@@ -56,13 +56,13 @@
     "description": "Main toggle section header"
   },
   "statusOff": {
-    "message": "Off — tap to listen without video"
+    "message": "Off · Turn on to hide the video"
   },
   "statusOn": {
-    "message": "On — audio only, video hidden"
+    "message": "On · Video hidden, audio stays"
   },
   "shortcut": {
-    "message": "Keyboard shortcut (tap to change)"
+    "message": "Keyboard shortcut"
   },
   "thisMonth": {
     "message": "This month",
@@ -77,7 +77,7 @@
     "description": "Label for used data statistic"
   },
   "savedData": {
-    "message": "Data saved vs 720p",
+    "message": "Saved vs 720p",
     "description": "Label for data saved statistic"
   },
   "listenedTime": {
@@ -161,17 +161,17 @@
     "description": "Message shown when no video is currently active"
   },
   "restoreQuality": {
-    "message": "Video quality when off",
+    "message": "Return to video at",
     "description": "Setting label for the quality the video returns to when audio mode is off"
   },
   "restoreQualityHint": {
-    "message": "The video returns to this quality when you turn Listen Mode off. Applies instantly."
+    "message": "Video quality after you turn audio only off."
   },
   "qualityAuto": {
     "message": "Auto"
   },
   "overlayStyle": {
-    "message": "Visual"
+    "message": "Listening visual"
   },
   "overlayStyleHint": {
     "message": "What you see in place of the video."
@@ -193,5 +193,8 @@
   },
   "styleMinimal": {
     "message": "Minimal"
+  },
+  "statsEstimate": {
+    "message": "Data figures are estimates."
   }
 }

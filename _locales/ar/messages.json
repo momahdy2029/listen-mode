@@ -56,13 +56,13 @@
     "description": "Main toggle section header"
   },
   "statusOff": {
-    "message": "متوقف — اضغط للاستماع بدون فيديو"
+    "message": "متوقف · فعّل لإخفاء الفيديو"
   },
   "statusOn": {
-    "message": "يعمل — صوت فقط، الفيديو مخفي"
+    "message": "يعمل · الصوت مستمر والفيديو مخفي"
   },
   "shortcut": {
-    "message": "اختصار لوحة المفاتيح (اضغط للتغيير)"
+    "message": "اختصار لوحة المفاتيح"
   },
   "thisMonth": {
     "message": "هذا الشهر",
@@ -77,7 +77,7 @@
     "description": "Label for used data statistic"
   },
   "savedData": {
-    "message": "البيانات الموفَّرة مقارنةً بـ 720p",
+    "message": "التوفير مقارنةً بـ 720p",
     "description": "Label for data saved statistic"
   },
   "listenedTime": {
@@ -161,17 +161,17 @@
     "description": "Message shown when no video is currently active"
   },
   "restoreQuality": {
-    "message": "جودة الفيديو عند الإيقاف",
+    "message": "جودة الفيديو عند العودة",
     "description": "Setting label for the quality the video returns to when audio mode is off"
   },
   "restoreQualityHint": {
-    "message": "يعود الفيديو إلى هذه الجودة عند إيقاف وضع الاستماع. يُطبَّق فورًا."
+    "message": "جودة الفيديو بعد إيقاف وضع الاستماع."
   },
   "qualityAuto": {
     "message": "تلقائي"
   },
   "overlayStyle": {
-    "message": "الشكل"
+    "message": "الشكل أثناء الاستماع"
   },
   "overlayStyleHint": {
     "message": "ما يظهر مكان الفيديو أثناء الاستماع."
@@ -193,5 +193,8 @@
   },
   "styleMinimal": {
     "message": "بسيط"
+  },
+  "statsEstimate": {
+    "message": "أرقام استهلاك البيانات تقديرية."
   }
 }

@@ -856,7 +856,7 @@ if (!window.__youtubeAudioModeLoaded) {
       <div class="am-thumb-card">
         <img class="am-thumb-img" src="${thumb}" alt="">
         <div class="am-thumb-text">
-          <div class="am-thumb-title" id="am-overlay-video-title"></div>
+          <div class="am-thumb-title" id="am-overlay-video-title" dir="auto"></div>
           ${text}
         </div>
       </div>

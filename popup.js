@@ -55,6 +55,7 @@ async function setLanguage(lang) {
 
     // Update direction
     document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
 
     // Update button text
     langBtn.textContent = lang === 'ar' ? 'En' : 'ع';
@@ -278,7 +279,11 @@ if (volumeSelect) {
 const qualityChips = Array.from(document.querySelectorAll('#quality-chips .chip'));
 
 function markQualityChip(quality) {
-    qualityChips.forEach(chip => chip.classList.toggle('active', chip.dataset.quality === quality));
+    qualityChips.forEach(chip => {
+        const selected = chip.dataset.quality === quality;
+        chip.classList.toggle('active', selected);
+        chip.setAttribute('aria-pressed', String(selected));
+    });
 }
 
 if (qualityChips.length) {
@@ -314,7 +319,11 @@ if (qualityChips.length) {
 const styleChips = Array.from(document.querySelectorAll('#style-chips .chip'));
 
 function markStyleChip(style) {
-    styleChips.forEach(chip => chip.classList.toggle('active', chip.dataset.style === style));
+    styleChips.forEach(chip => {
+        const selected = chip.dataset.style === style;
+        chip.classList.toggle('active', selected);
+        chip.setAttribute('aria-pressed', String(selected));
+    });
 }
 
 if (styleChips.length) {
@@ -391,6 +400,11 @@ function updateMusicPlayerUI(state) {
         // Reset first
         amTitle.classList.remove('moving');
         amTitle.style.removeProperty('--scroll-distance');
+
+        // Marquee direction must follow the text's own direction (Arabic title in
+        // an English UI, or vice versa), not the popup language
+        const rtlText = wrapper && getComputedStyle(wrapper).direction === 'rtl';
+        amTitle.classList.toggle('rtl-text', !!rtlText);
 
         // Force layout update and check overflow
         if (wrapper && amTitle.scrollWidth > wrapper.clientWidth) {
@@ -545,9 +559,14 @@ let currentFilter = 'month'; // 'month' or 'all'
 
 const filterBtns = document.querySelectorAll('.stats-filter');
 filterBtns.forEach(btn => {
+    btn.setAttribute('aria-pressed', String(btn.classList.contains('active')));
     btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
+        filterBtns.forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+        });
         btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
         currentFilter = btn.dataset.filter;
         updateStats();
     });
@@ -724,12 +743,45 @@ const imageUrlInput = document.getElementById('custom-image-url');
 const applyImageBtn = document.getElementById('apply-image-btn');
 
 // Toggle Settings Panel
+settingsBtn.setAttribute('aria-controls', 'settings-panel');
+settingsBtn.setAttribute('aria-expanded', 'false');
+
+function setSettingsOpen(open) {
+    settingsPanel.inert = !open;
+    settingsPanel.classList.toggle('open', open);
+    settingsBtn.setAttribute('aria-expanded', String(open));
+    // Prevent keyboard navigation into the screen covered by the sheet.
+    for (const sibling of settingsPanel.parentElement.children) {
+        if (sibling !== settingsPanel) sibling.inert = open;
+    }
+    (open ? closeSettingsBtn : settingsBtn).focus();
+}
+
 settingsBtn.addEventListener('click', () => {
-    settingsPanel.classList.add('open');
+    setSettingsOpen(true);
 });
 
 closeSettingsBtn.addEventListener('click', () => {
-    settingsPanel.classList.remove('open');
+    setSettingsOpen(false);
+});
+
+settingsPanel.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        event.preventDefault();
+        setSettingsOpen(false);
+    } else if (event.key === 'Tab') {
+        const focusable = Array.from(settingsPanel.querySelectorAll('button, input, select, a[href]'))
+            .filter(element => !element.disabled && element.getClientRects().length);
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    }
 });
 
 // Load Saved Settings
@@ -860,4 +912,3 @@ if (supportBtn) {
         chrome.tabs.create({ url: 'https://github.com/momahdy2029/listen-mode' });
     });
 }
-
